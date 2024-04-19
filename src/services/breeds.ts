@@ -3,17 +3,27 @@ import { api } from "./api";
 
 export const getBreedsService = async ({ limit, page, search = "" }: any) => {
   try {
-    const { data } = await api.get<{
-      data: Breed[];
-    }>(`/breeds`, {
+    if (search) {
+      console.log("Tem search");
+      const { data } = await api.get<Breed[]>(`/breeds/search?q=${search}`, {
+        params: {
+          search,
+        },
+      });
+      return data;
+    }
+    const { data } = await api.get<Breed[]>(`/breeds`, {
       params: {
         limit,
         page,
-        search,
       },
     });
     return data;
   } catch (e: any) {
     throw new Error(e);
   }
+};
+
+export const getBreedsBySearchService = async ({ search = "" }: any) => {
+  const { data } = await api.get<Breed[]>("");
 };

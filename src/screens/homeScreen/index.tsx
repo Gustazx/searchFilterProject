@@ -16,7 +16,7 @@ export const HomeScreen = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [breeds, setBreeds] = useState<Breed[]>([]);
   const [search] = useDebounce(searchText, 500);
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState<number>(0);
   const limit = useRef<number>(10);
 
   const theme = useTheme() as ThemeType;
@@ -34,15 +34,13 @@ export const HomeScreen = () => {
   };
 
   const onScrollEnd = () => {
-    console.log(page);
     if (!isFetching) {
       setPage((page) => page + 1);
-      refetch();
     }
   };
 
-  const { data, refetch, isFetching } = useQuery(
-    ["facts", page],
+  const { refetch, isFetching } = useQuery(
+    ["breeds", page],
     () =>
       getBreedsService({
         limit: limit.current,
@@ -50,17 +48,24 @@ export const HomeScreen = () => {
         search: search,
       }),
     {
-      onSuccess: (res: any) => {
-        setBreeds((currentBreeds) => [...currentBreeds, ...res]);
+      onSuccess: (res) => {
+        if (!search) {
+          setBreeds((currentBreeds) => [...currentBreeds, ...res]);
+        }
+        if (search) {
+          setBreeds([...res]);
+        }
       },
     }
   );
 
-  // useEffect(() => {
-  //   setPage(0);
-  //   setBreeds([]);
-  //   refetch();
-  // }, [search]);
+  useEffect(() => {
+    if (!isFetching) {
+      setPage(0);
+      setBreeds([]);
+      refetch();
+    }
+  }, [search]);
 
   return (
     <S.Container>
@@ -74,15 +79,11 @@ export const HomeScreen = () => {
           }
         }}
       >
-        {Boolean(!isFetching) ? (
-          breeds.map((breed) => (
-            <View style={{ padding: 40 }} key={breed.id}>
-              <Text>{breed.name}</Text>
-            </View>
-          ))
-        ) : (
-          <View />
-        )}
+        {breeds.map((breed) => (
+          <View style={{ padding: 40 }} key={breed.id}>
+            <Text>{breed.name}</Text>
+          </View>
+        ))}
       </ScrollView>
       {isFetching && <InfinityScrollLoading />}
     </S.Container>
