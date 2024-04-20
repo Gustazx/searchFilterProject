@@ -6,3 +6,7 @@ export const Container = styled.View<{ theme: ThemeType }>`
   margin: ${({ theme }) => theme.spacing.margins.extraLarge}px;
   padding-top: ${({ theme }) => theme.spacing.paddings.extraLarge}px;
 `;
+
+export const PaddingContainer = styled.View<{ theme: ThemeType }>`
+  padding: ${({ theme }) => theme.spacing.paddings.medium}px;
+`;

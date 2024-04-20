@@ -1,10 +1,24 @@
-import { Breed } from "@src/types/breed";
+import { IPagination } from "@src/types/pagination";
 import { api } from "./api";
 
-export const getBreedsService = async ({ limit, page, search = "" }: any) => {
+export interface Breed {
+  id: string;
+  name: string;
+  temperament: string;
+  origin: string;
+  weight: {
+    imperial: string;
+    metric: string;
+  };
+}
+
+export const getBreedsService = async ({
+  limit,
+  page,
+  search = "",
+}: IPagination) => {
   try {
     if (search) {
-      console.log("Tem search");
       const { data } = await api.get<Breed[]>(`/breeds/search?q=${search}`, {
         params: {
           search,
@@ -22,8 +36,4 @@ export const getBreedsService = async ({ limit, page, search = "" }: any) => {
   } catch (e: any) {
     throw new Error(e);
   }
-};
-
-export const getBreedsBySearchService = async ({ search = "" }: any) => {
-  const { data } = await api.get<Breed[]>("");
 };

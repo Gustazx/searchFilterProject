@@ -5,12 +5,13 @@ import { useQuery } from "react-query";
 import * as S from "./styles";
 import { SearchInput } from "@src/components/SearchInput";
 import { getBreedsService } from "@src/services/breeds";
-import { Breed } from "@src/types/breed";
+import { Breed } from "@src/services/breeds";
 import { ScrollView, Text, View } from "react-native";
 import { useTheme } from "styled-components";
 import { ThemeType } from "@src/common/theme";
 import { ActivityIndicator } from "react-native-paper";
 import { InfinityScrollLoading } from "@src/components/InfinityScrollLoading";
+import { BreedCard } from "./components/breedCard";
 
 export const HomeScreen = () => {
   const [searchText, setSearchText] = useState<string>("");
@@ -70,20 +71,31 @@ export const HomeScreen = () => {
   return (
     <S.Container>
       <SearchInput value={searchText} onChangeText={setSearchText} />
+      <></>
       <ScrollView
         showsVerticalScrollIndicator={true}
         scrollEventThrottle={16}
+        style={{
+          paddingBottom: 30,
+        }}
         onScroll={({ nativeEvent }) => {
           if (isCloseToBottom(nativeEvent)) {
             onScrollEnd();
           }
         }}
       >
-        {breeds.map((breed) => (
-          <View style={{ padding: 40 }} key={breed.id}>
-            <Text>{breed.name}</Text>
-          </View>
-        ))}
+        <S.PaddingContainer>
+          {breeds.map((breed: Breed) => (
+            <BreedCard
+              key={breed.id}
+              id={breed.id}
+              name={breed.name}
+              origin={breed.origin}
+              temperament={breed.temperament}
+              weight={breed.weight}
+            />
+          ))}
+        </S.PaddingContainer>
       </ScrollView>
       {isFetching && <InfinityScrollLoading />}
     </S.Container>
